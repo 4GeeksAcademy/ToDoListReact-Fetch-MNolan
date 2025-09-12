@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 
-
-//include images into your bundle
-
+//URL de la API: https://playground.4geeks.com/todo/docs#/User%20operations/read_user_users__user_name__get
 
 //create your first component
 const Home = () => {
@@ -31,7 +29,12 @@ const Home = () => {
 		
 	})
 	}
-	function addTodo(){
+	function addTodos(){
+		let data = {
+			label: "Ir al peluquero",
+			is_done: false
+		}
+		//fetch -> url del endpoint, metodo, enviar al body
 		fetch("https://playground.4geeks.com/todo/todos/cenicerolleno", {
 			method: "POST",
 			headers: {
@@ -39,15 +42,29 @@ const Home = () => {
 			},
 			body: JSON.stringify(data)
 		})
-		.then((response) => { return response.json( )})
-		.then()
-		.catch()
+		//1er .then() status code, recibe la informacion en JSON, convertimos a JS
+		// y la enviamos al siguiente .then() 
+		.then((response) => { 
+			return response.json( ) // .json() convertir de JSON a JS y enviarlo al siguiente .then()
+		})
+		//2o .then() -> recibe la informacion en JS
+		.then((data)=>{
+			console.log(data);
+			
+		})
+		.catch((err)=>{ err })
 	}
 	return (
 		<div className="text-center">
-            <p>holi</p>
+            <h1>Holi</h1>
+			<button className="btn btn-success" onClick={()=>{
+				getTodos();
+			}}>Get Todos</button>
+			<button className="btn btn-primary" onClick={()=>{
+				addTodos();
+			}}>Add Todos</button>
 			{todos.map((value)=>{
-				return <h1>{value.label}</h1>
+				return <h4>{value.label}</h4>
 
 			})}
 			
