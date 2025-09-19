@@ -1,11 +1,8 @@
-/* 
+body{
+    background-color: lightgrey;
+}
 
-    You can write your own styles here...
-    
-    
-    ...Or you can use the import command to include 
-    other sylesheets into your bunde as well, e.j:
-    
-    import 'relative/path/to/stylesheet.scss';
-
-*/
+.principal{
+    border: 1px black;
+    box-shadow: 4px 4px 9px 2px rgba(0,0,0,0.66)
+}
