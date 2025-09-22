@@ -6,7 +6,9 @@ import React, { useState, useEffect } from "react";
 const Home = () => {
 	const [todos, setTodos] = useState([]);
 	const [newTodo, setNewTodo] = useState("");
-	//const [userName, setUserName] = useState("");
+	const userName = "cenicerolleno";
+	//Podemos crear una constante que contenga la URL del endpoint para usarla despues en el fetch
+	const apiTodosURL = "https://playground.4geeks.com/todo";
 	/*//useEfect recibe 2 parametros
 	//			1er-> funcion 
 	//			2o (opcional)-> demarca cual es de los primeros 3 casos
@@ -20,18 +22,30 @@ const Home = () => {
 	//useEffect()*/
 	useEffect(() => {
 		//console.log("Funcion useEfefect llamada");
-		getTodos();
-		
+		fetch(`${apiTodosURL}/users/${userName}`)
+			.then(response => {
+				if (response.status === 404 || response.status === 400) {
+					return fetch(`${apiTodosURL}/users/${userName}`, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" }
+					})
+						.then(() => fetch(`${apiTodosURL}/users/${userName}`))
+				}
+				return response;
+			})
+
+		return getTodos();
+
 		//return
 	}, []);
-	//Podemos crear una constante que contenga la URL del endpoint para usarla despues en el fetch
-	const apiTodosURL = "https://playground.4geeks.com/todo"; 
+
+
 
 	function getTodos() {
 
 
 		//fetch() -> url del endpoint, enviar el body
-		fetch(apiTodosURL + "/users/cenicerolleno")
+		fetch(`${apiTodosURL}/users/${userName}`)
 			//method: "GET" //Por defecto si solo se envia el fetch sin un metodo,
 			//  siempre se asignará el método GET 
 			// status code , recibe la informacion en JSON, convertimos a JS y l aenviamos 
@@ -53,14 +67,14 @@ const Home = () => {
 	}
 	function addTodo() {
 		if (newTodo.trim() === "") return;
-		//setAddTodos(addTodos)
+
 		const data = {
 			label: newTodo,
 			is_done: false,
-			user_id: "cenicerolleno"
+			//user_id: "cenicerolleno"
 		};
 		//fetch -> url del endpoint, metodo, enviar al body
-		fetch(apiTodosURL + "/todos/cenicerolleno", {
+		fetch(`${apiTodosURL}/todos/${userName}`, {
 			method: "POST",
 			headers: {
 				'Content-Type': 'application/json'
@@ -83,13 +97,11 @@ const Home = () => {
 			);
 	}
 	function deleteTodo(id) {
-		//setDeleteTodos(deleteTodos)
-		fetch(`https://playground.4geeks.com/todo/todos/${id}`, {
+
+		fetch(`${apiTodosURL}/todos/${id}`, {
 			method: "DELETE"
 		})
-			/*.then((response) =>{
-				return response.json()
-			})*/
+			
 			.then(() =>
 				getTodos()
 			)
@@ -97,71 +109,58 @@ const Home = () => {
 
 
 	}
-	/*const handleChange = (event) => {
-		return event.target.value;
-	}*/
+
 
 	return (
 		<div className="container text-center mt-5">
-			
-			
+
+
 			<div className="principal card ">
 				<div className="card-header"><h1>To Do List</h1></div>
 				<div className="card-body">
-			<form >
-				<label className="mb-2 me-2">El usuario es</label> 
-				<a href="https://playground.4geeks.com/todo/docs#" 
-				target="_blank" rel="noopener noreferrer">
-				 "cenicerolleno"</a>
-					<input
-						className="form-control"
-						placeholder="Añade a la lista..."
-						value={newTodo}
-						onChange={(event) => setNewTodo(event.target.value)}
-						onKeyDown={(event) => {
-							if (event.key === "Enter") {
-								event.preventDefault();
-								addTodo();
-							}
+					<form >
+						<label className="mb-2 me-2">El usuario es "{userName}"</label>
+						<p><a href={apiTodosURL+'/docs#/'} target="_blanck">Link al Endpoint</a></p>
+						<input
+							className="form-control"
+							placeholder="Añade a la lista..."
+							value={newTodo}
+							onChange={(event) => setNewTodo(event.target.value)}
+							onKeyDown={(event) => {
+								if (event.key === "Enter") {
+									event.preventDefault();
+									addTodo();
+								}
 
-							//onKeyDown={(event) => {
-						}} />
-					<div className="card mt-2">
-						{todos.map((todo) => (
-							<div
-								key={todo.id}
-								className="card-text d-flex justify-content-between p-2 mb-2 ms-3"
-							>
-								{todo.label}
-								<button
-									type="button"
-									className="btn-close"
-									aria-label="Close"
-									onClick={() => deleteTodo(todo.id)}
-								/>
-							</div>
-						))}
-					</div>
+							}} />
+						<div className="card mt-2">
+							{todos.map((todo) => (
+								<div
+									key={todo.id}
+									className="card-text d-flex justify-content-between p-2 mb-2 ms-3"
+								>
+									{todo.label}
+									<button
+										type="button"
+										className="btn-close"
+										aria-label="Close"
+										onClick={() => deleteTodo(todo.id)}
+									/>
+								</div>
+							))}
+						</div>
 
 
 
-				
-			</form>
-			</div>
-			<div class="card-footer d-flex justify-content-start">
-				<label className="counter ms-">{todos.length} items</label>
-			</div>
+
+					</form>
+				</div>
+				<div class="card-footer d-flex justify-content-start">
+					<label className="counter ms-">{todos.length} items</label>
+				</div>
 			</div>
 
-			{/*
-			<button className="btn btn-primary" onClick={() => {
-				addTodo();
-			}}>Add Todos</button>
-			{todos.map((todo) => {
-				return <h4>{value.label}</h4>
 
-			})}
-		*/}
 		</div>
 	);
 };
